@@ -37,13 +37,7 @@ shinyServer(function(input, output, session) {
       dat,
       scale = TRUE,
       colsToUse = 1:ncol(dat),
-      nClus = 10,
-      xdim   = as.integer(ctx$op.value('xdim')),
-      ydim   = as.integer(ctx$op.value('ydim')), 
-      rlen   = as.integer(ctx$op.value('rlen')), 
-      mst    = as.integer(ctx$op.value('mst')), 
-      alpha  = c(as.integer(ctx$op.value('alpha_start')),(as.double(ctx$op.value('alpha_end')))),
-      distf  = as.integer(ctx$op.value('distf'))
+      nClus = 10
     )
     
     PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
