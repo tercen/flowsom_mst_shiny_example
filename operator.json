@@ -1,7 +1,51 @@
 {
-  "name": "Template Shiny Operator",
-  "description": "Template to create a Shiny operator in Tercen.",
-  "tags": ["template"],
+  "name": "FlowSOM MST Shiny Operator",
+  "description": "FlowSOM MST Shiny Operator in Tercen.",
+  "tags": ["flowsom"],
   "authors": ["tercen"],
-  "urls": ["https://github.com/tercen/template_shiny_operator"]
+  "urls": ["https://github.com/tercen/flowsom_mst_shiny_operator"],
+  "properties": [
+  {
+    "kind": "DoubleProperty",
+    "name": "xdim",
+    "defaultValue": 10,
+    "description": "size of x dim for the som grid"
+  },
+   {
+    "kind": "DoubleProperty",
+    "name": "ydim",
+    "defaultValue": 10,
+    "description": "size of y dim for the som grid"
+  },
+  {
+    "kind": "DoubleProperty",
+    "name": "rlen",
+    "defaultValue": 10,
+    "description": "size of rlen"
+  },
+   {
+    "kind": "DoubleProperty",
+    "name": "mst",
+    "defaultValue": 1,
+    "description": "amount of training"
+  },
+   {
+    "kind": "DoubleProperty",
+    "name": "alpha_1",
+    "defaultValue": 0.05,
+    "description": "alpha setting"
+  },
+   {
+    "kind": "DoubleProperty",
+    "name": "alpha_2",
+    "defaultValue": 0.01,
+    "description": "alpha setting"
+  },
+  {
+    "kind": "DoubleProperty",
+    "name": "distf",
+    "defaultValue": 2,
+    "description": "distance setting"
+  }
+  ]
 }

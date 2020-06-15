@@ -1,4 +1,4 @@
-# Template Shiny operator for Tercen
+# FlowSOM MST Shiny operator for Tercen
 
-A template to create Shiny operators in Tercen.
+FlowSOM MST in Tercen.
 

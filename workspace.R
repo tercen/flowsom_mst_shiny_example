@@ -2,12 +2,13 @@ library(shiny)
 library(tercen)
 library(dplyr)
 library(tidyr)
+library(FlowSOM)
 
 ############################################
 #### This part should not be included in ui.R and server.R scripts
 getCtx <- function(session) {
-  ctx <- tercenCtx(stepId = "9b7619c7-4d66-49fa-9bb3-2b06209e58e4",
-                   workflowId = "f81d245ef22a2ff192ed2533a6002ec3")
+  ctx <- tercenCtx(stepId = "c7272671-643f-4d7b-8138-e01c46b43e64",
+                   workflowId = "969f44a542c98b7d15717e0d35000cdd")
   return(ctx)
 }
 ####
@@ -15,15 +16,10 @@ getCtx <- function(session) {
 
 ui <- shinyUI(fluidPage(
   
-  titlePanel("Histogram"),
-  
-  sidebarPanel(
-    sliderInput("plotWidth", "Plot width (px)", 200, 2000, 500),
-    sliderInput("plotHeight", "Plot height (px)", 200, 2000, 500),
-  ),
+  titlePanel("FlowSOM - MST"),
   
   mainPanel(
-    uiOutput("reacOut")
+    plotOutput("main.plot")
   )
   
 ))
@@ -33,32 +29,41 @@ server <- shinyServer(function(input, output, session) {
   dataInput <- reactive({
     getValues(session)
   })
-  
-  output$reacOut <- renderUI({
-    plotOutput(
-      "main.plot",
-      height = input$plotHeight,
-      width = input$plotWidth
-    )
-  }) 
-  
+
   output$main.plot <- renderPlot({
     values <- dataInput()
-    data <- values$data$.y
-    hist(data)
+
+    dat <- flowCore::flowFrame(as.matrix(values))
+    fSOM <- FlowSOM(
+      dat,
+      scale = TRUE,
+      colsToUse = 1:ncol(dat),
+      nClus = 10,
+      xdim   = as.integer(ctx$op.value('xdim')),
+      ydim   = as.integer(ctx$op.value('ydim')), 
+      rlen   = as.integer(ctx$op.value('rlen')), 
+      mst    = as.integer(ctx$op.value('mst')), 
+      alpha  = c(as.integer(ctx$op.value('alpha_start')),(as.double(ctx$op.value('alpha_end')))),
+      distf  = as.integer(ctx$op.value('distf'))
+    )
+
+    PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
+
   })
   
 })
 
 getValues <- function(session){
+
   ctx <- getCtx(session)
-  values <- list()
-
-  values$data <- ctx %>% select(.y, .ri, .ci) %>%
-    group_by(.ci, .ri) %>%
-    summarise(.y = mean(.y)) # take the mean of multiple values per cell
-
-  return(values)
+  
+  data = ctx %>% 
+    select(.ci, .ri, .y) %>% 
+    reshape2::acast(.ci ~ .ri, value.var='.y', fill=NaN, fun.aggregate=mean)
+  
+  return(data)
 }
 
 runApp(shinyApp(ui, server))  
+
+

@@ -2,6 +2,8 @@ library(shiny)
 library(tercen)
 library(dplyr)
 library(tidyr)
+library(FlowSOM)
+
 
 ############################################
 #### This part should not be modified
@@ -24,30 +26,36 @@ shinyServer(function(input, output, session) {
     getValues(session)
   })
   
-  output$reacOut <- renderUI({
-    plotOutput(
-      "main.plot",
-      height = input$plotHeight,
-      width = input$plotWidth
-    )
-  }) 
-  
   output$main.plot <- renderPlot({
     values <- dataInput()
-    data <- values$data$.y
-    hist(data)
+    
+    dat <- flowCore::flowFrame(as.matrix(values))
+    fSOM <- FlowSOM(
+      dat,
+      scale = TRUE,
+      colsToUse = 1:ncol(dat),
+      nClus = 10,
+      xdim   = as.integer(ctx$op.value('xdim')),
+      ydim   = as.integer(ctx$op.value('ydim')), 
+      rlen   = as.integer(ctx$op.value('rlen')), 
+      mst    = as.integer(ctx$op.value('mst')), 
+      alpha  = c(as.integer(ctx$op.value('alpha_start')),(as.double(ctx$op.value('alpha_end')))),
+      distf  = as.integer(ctx$op.value('distf'))
+    )
+    
+    PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
+    
   })
   
 })
 
 getValues <- function(session){
+  
   ctx <- getCtx(session)
-  values <- list()
   
-  values$data <- ctx %>% select(.y, .ri, .ci) %>%
-    group_by(.ci, .ri) %>%
-    summarise(.y = mean(.y)) # take the mean of multiple values per cell
+  data = ctx %>% 
+    select(.ci, .ri, .y) %>% 
+    reshape2::acast(.ci ~ .ri, value.var='.y', fill=NaN, fun.aggregate=mean)
   
-  return(values)
+  return(data)
 }
-
