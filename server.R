@@ -27,26 +27,37 @@ shinyServer(function(input, output, session) {
   })
   
   output$main.plot <- renderPlot({
-    
     ctx <- getCtx(session)
     
     values <- dataInput()
+    colnames(values) <- ctx$rselect()[[1]]
     
-    dat <- flowCore::flowFrame(as.matrix(values))
-    fSOM <- FlowSOM(
-      dat,
-      scale = TRUE,
-      colsToUse = 1:ncol(dat),
-      nClus = 10
+    flow.dat <- flowCore::flowFrame(as.matrix(values))
+    
+    n.clust <- NULL
+    if(!ctx$op.value('nclust') == "NULL") n.clust <- as.integer(ctx$op.value('nclust'))
+    
+    fsom <- FlowSOM(
+      flow.dat,
+      colsToUse = 1:ncol(flow.dat),
+      nClus = n.clust,
+      maxMeta = as.integer(ctx$op.value('maxMeta')),
+      seed = as.integer(ctx$op.value('seed')),
+      xdim   = as.integer(ctx$op.value('xdim')),
+      ydim   = as.integer(ctx$op.value('ydim')),
+      rlen   = as.integer(ctx$op.value('rlen')),
+      mst    = as.integer(ctx$op.value('mst')),
+      alpha  = c(as.integer(ctx$op.value('alpha_start')), (as.double(ctx$op.value('alpha_end')))),
+      distf  = as.integer(ctx$op.value('distf'))
     )
     
-    PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
+    PlotStars(fsom[[1]], backgroundValues = as.factor(fsom[[2]]))
     
   })
   
 })
 
-getValues <- function(session){
+getValues <- function(session) {
   
   ctx <- getCtx(session)
   

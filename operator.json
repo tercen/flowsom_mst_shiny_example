@@ -5,6 +5,24 @@
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/flowsom_mst_shiny_operator"],
   "properties": [
+   {
+    "kind": "StringProperty",
+    "name": "nclust",
+    "defaultValue": "NULL",
+    "description": "number of clusters"
+  },
+  {
+    "kind": "DoubleProperty",
+    "name": "maxMeta",
+    "defaultValue": 10,
+    "description": "Maximal number of clusters"
+  },
+  {
+    "kind": "DoubleProperty",
+    "name": "seed",
+    "defaultValue": 42,
+    "description": "random seed"
+  },
   {
     "kind": "DoubleProperty",
     "name": "xdim",
@@ -41,7 +59,7 @@
     "defaultValue": 0.01,
     "description": "alpha setting"
   },
-  {
+ {
     "kind": "DoubleProperty",
     "name": "distf",
     "defaultValue": 2,
