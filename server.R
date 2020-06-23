@@ -57,7 +57,7 @@ shinyServer(function(input, output, session) {
       scale = TRUE,
       colsToUse = 1:ncol(dat),
       nClus = n.clust,
-      maxMeta = as.integer(ctx$op.value('maxMeta')),
+      maxMeta = 10,
       seed = 42
     )
     
