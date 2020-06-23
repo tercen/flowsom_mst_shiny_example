@@ -58,7 +58,7 @@ shinyServer(function(input, output, session) {
       colsToUse = 1:ncol(dat),
       nClus = n.clust,
       maxMeta = as.integer(ctx$op.value('maxMeta')),
-      seed = as.integer(ctx$op.value('seed'))
+      seed = 42
     )
     
     PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
