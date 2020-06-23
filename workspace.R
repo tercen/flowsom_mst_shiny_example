@@ -39,20 +39,17 @@ server <- shinyServer(function(input, output, session) {
     dat <- flowCore::flowFrame(as.matrix(values))
     
     n.clust <- NULL
-    # if(!ctx$op.value('nclust') == "NULL") n.clust <- as.integer(ctx$op.value('nclust'))
+    if(!is.null(ctx$op.value('nclust'))) {
+      if(ctx$op.value('nclust') != "NULL") n.clust <- as.integer(ctx$op.value('nclust'))
+    } 
     
     fSOM <- FlowSOM(
       dat,
       scale = TRUE,
       colsToUse = 1:ncol(dat),
       nClus = n.clust,
-      maxMeta = 10
-      # xdim   = as.integer(ctx$op.value('xdim')),
-      # ydim   = as.integer(ctx$op.value('ydim')), 
-      # rlen   = as.integer(ctx$op.value('rlen')), 
-      # mst    = as.integer(ctx$op.value('mst')), 
-      # alpha  = c(as.integer(ctx$op.value('alpha_1')),(as.double(ctx$op.value('alpha_2')))),
-      # distf  = as.integer(ctx$op.value('distf'))
+      maxMeta = 10,
+      seed = as.integer(ctx$op.value('seed'))
     )
     
     PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
