@@ -40,6 +40,9 @@ shinyServer(function(input, output, session) {
   })
   
   output$main.plot <- renderPlot({
+    
+    ctx <- getCtx(session)
+    
     values <- dataInput()
     
     dat <- flowCore::flowFrame(as.matrix(values))
