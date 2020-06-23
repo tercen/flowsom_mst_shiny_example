@@ -24,15 +24,6 @@ ui <- shinyUI(fluidPage(
   
 ))
 
-fsom <- getValues(session)
-
-server <- shinyServer(function(input, output, session) {
-  
-  output$main.plot <- renderPlot({
-    PlotStars(fsom[[1]], backgroundValues = as.factor(fsom[[2]]))
-  })
-  
-})
 
 getValues <- function(session) {
 
@@ -65,6 +56,18 @@ getValues <- function(session) {
   )
   return(fsom)
 }
+
+fsom <- getValues(session)
+
+server <- shinyServer(function(input, output, session) {
+  
+  output$main.plot <- renderPlot({
+    
+    PlotStars(fsom[[1]], backgroundValues = as.factor(fsom[[2]]))
+  })
+  
+})
+
 
 runApp(shinyApp(ui, server))  
 
