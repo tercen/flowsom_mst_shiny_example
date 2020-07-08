@@ -7,7 +7,7 @@ library(FlowSOM)
 ############################################
 #### This part should not be included in ui.R and server.R scripts
 getCtx <- function(session) {
-  ctx <- tercenCtx(stepId = "d9da8ab3-ea4f-4da6-88d2-2d8e566040fe",
+  ctx <- tercenCtx(stepId = "a3f464fd-cd95-41fa-97e2-6e9b058a6269",
                    workflowId = "7eee20aa9d6cc4eb9d7f2cc2430313b6")
   return(ctx)
 }
@@ -18,8 +18,13 @@ ui <- shinyUI(fluidPage(
   
   titlePanel("FlowSOM - MST"),
   
+  sidebarPanel(
+    sliderInput("plotWidth", "Plot width (px)", 200, 2000, 500),
+    sliderInput("plotHeight", "Plot height (px)", 200, 2000, 700)
+  ),
+  
   mainPanel(
-    plotOutput("main.plot")
+    uiOutput("reacOut")
   )
   
 ))
@@ -28,6 +33,14 @@ server <- shinyServer(function(input, output, session) {
   
   dataInput <- reactive({
     getValues(session)
+  })
+  
+  output$reacOut <- renderUI({
+    plotOutput(
+      "main.plot",
+      height = input$plotHeight,
+      width = input$plotWidth
+    )
   })
   
   output$main.plot <- renderPlot({

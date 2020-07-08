@@ -39,6 +39,14 @@ shinyServer(function(input, output, session) {
     getValues(session)
   })
   
+  output$reacOut <- renderUI({
+    plotOutput(
+      "main.plot",
+      height = input$plotHeight,
+      width = input$plotWidth
+    )
+  })
+  
   output$main.plot <- renderPlot({
     
     ctx <- getCtx(session)
@@ -66,6 +74,7 @@ shinyServer(function(input, output, session) {
   })
   
 })
+
 
 
 
