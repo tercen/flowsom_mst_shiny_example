@@ -4,7 +4,6 @@ library(dplyr)
 library(tidyr)
 library(FlowSOM)
 
-
 ############################################
 #### This part should not be modified
 getCtx <- function(session) {
@@ -20,19 +19,6 @@ getCtx <- function(session) {
 ####
 ############################################
 
-getValues <- function(session){
-  
-  ctx <- getCtx(session)
-  
-  data = ctx %>% 
-    select(.ci, .ri, .y) %>% 
-    reshape2::acast(.ci ~ .ri, value.var='.y', fill=NaN, fun.aggregate=mean)
-  
-  colnames(data) <- ctx$rselect()[[1]]
-  
-  return(data)
-}
-
 shinyServer(function(input, output, session) {
   
   dataInput <- reactive({
@@ -46,6 +32,12 @@ shinyServer(function(input, output, session) {
       width = input$plotWidth
     )
   })
+  
+  output$selectMarker <- renderUI({
+    d <- dataInput()
+    markers <- colnames(d)
+    selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
+  }) 
   
   output$main.plot <- renderPlot({
     
@@ -69,13 +61,25 @@ shinyServer(function(input, output, session) {
       seed = 42
     )
     
-    PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
+    # input par: plot stars or plot  marker
+    # dropdown menu
+    
+    if(input$plot_type == "Stars") PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
+    if(input$plot_type == "Markers") PlotMarker(fSOM[[1]], input$select_marker)
     
   })
   
 })
 
-
-
-
-
+getValues <- function(session){
+  
+  ctx <- getCtx(session)
+  
+  data = ctx %>% 
+    select(.ci, .ri, .y) %>% 
+    reshape2::acast(.ci ~ .ri, value.var='.y', fill=NaN, fun.aggregate=mean)
+  
+  colnames(data) <- ctx$rselect() %>% unite("rnames") %>% unlist %>% unname
+  
+  return(data)
+}

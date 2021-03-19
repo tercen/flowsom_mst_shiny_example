@@ -264,10 +264,10 @@
     },
     "matrixStats": {
       "Package": "matrixStats",
-      "Version": "0.56.0",
+      "Version": "0.58.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "d16f18aeb023d7a80c090d9458fc75a6"
+      "Hash": "c318d148056e5bb8d7de79b0876f9ae6"
     },
     "mime": {
       "Package": "mime",
@@ -362,17 +362,17 @@
     },
     "robustbase": {
       "Package": "robustbase",
-      "Version": "0.93-6",
+      "Version": "0.93-7",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "241454e22c9d26b11669b78d06706b41"
+      "Hash": "eed524235ccf3c4a0775791cd9499d65"
     },
     "rrcov": {
       "Package": "rrcov",
-      "Version": "1.5-2",
+      "Version": "1.5-5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "3b633169b417ab5a5d852881344ba6c7"
+      "Hash": "09336b5ca5e99b7c2d0d5b2e344f3c76"
     },
     "shiny": {
       "Package": "shiny",
@@ -380,6 +380,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "67d22f2e1e16eeb8d9b24a3036169ab4"
+    },
+    "shinyjs": {
+      "Package": "shinyjs",
+      "Version": "1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "7b54dd72674b2a3793cb364c20cba41e"
     },
     "sourcetools": {
       "Package": "sourcetools",
