@@ -1,6 +1,6 @@
 {
-  "name": "FlowSOM MST Shiny Operator",
-  "description": "FlowSOM MST Shiny Operator in Tercen.",
+  "name": "FlowSOM MST",
+  "description": "FlowSOM Minimum Spanning Tree: Displays cluster populations identified by the FlowSOM alglorithm into a graph which plots their relationships to each other.",
   "tags": ["flowsom"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/flowsom_mst_shiny_operator"],
