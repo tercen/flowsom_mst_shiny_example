@@ -15,8 +15,6 @@ getCtx <- function(session) {
 ####
 ############################################
 
-ctx = tercenCtx()
-
 deserialize.from.string = function(str64){
   con = rawConnection(base64enc::base64decode(str64), "r+")
   object = readRDS(con)
@@ -69,6 +67,7 @@ ui <- shinyUI(fluidPage(
   sidebarPanel(
     selectInput("plot_type", "Plot type:", c("Markers", "Stars"), "Markers"),
     uiOutput("selectMarker"),
+    sliderInput("maxNodeSize", "Node size", 0, 10, value = 1, step = 0.1),
     sliderInput("plotWidth", "Plot width (px)", 200, 2000, 500),
     sliderInput("plotHeight", "Plot height (px)", 200, 2000, 700)
   ),
@@ -104,8 +103,18 @@ server <- shinyServer(function(input, output, session) {
     ctx <- getCtx(session)
     fSOM <- dataInput()
 
-    if(input$plot_type == "Stars") PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
-    if(input$plot_type == "Markers") PlotMarker(fSOM[[1]], input$select_marker)
+    if(input$plot_type == "Stars") {
+      PlotStars(
+        fSOM[[1]],
+        maxNodeSize = input$maxNodeSize,
+        backgroundValues = as.factor(fSOM[[2]]))
+    } 
+    else if(input$plot_type == "Markers") {
+      PlotMarker(
+        fSOM[[1]],
+        maxNodeSize = input$maxNodeSize,
+        input$select_marker)
+    } 
     
   })
   
@@ -114,7 +123,6 @@ server <- shinyServer(function(input, output, session) {
 getValues <- function(session){
   
   ctx <- getCtx(session)
-
   # search for a schema that contains a column name 
   # schema = find.schema.by.factor.name(ctx, '.base64.serialized.r.model')
   schema = find.schema.by.factor.name(ctx, ctx$labels[[1]])

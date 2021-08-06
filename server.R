@@ -34,38 +34,28 @@ shinyServer(function(input, output, session) {
   })
   
   output$selectMarker <- renderUI({
-    d <- dataInput()
-    markers <- colnames(d)
+    fsom <- dataInput()
+    markers <- unname(colnames(fsom$FlowSOM$data))
     selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
   }) 
   
   output$main.plot <- renderPlot({
     
     ctx <- getCtx(session)
+    fSOM <- dataInput()
     
-    values <- dataInput()
-    
-    dat <- flowCore::flowFrame(as.matrix(values))
-    
-    n.clust <- NULL
-    if(!is.null(ctx$op.value('nclust'))) {
-      if(ctx$op.value('nclust') != "NULL") n.clust <- as.integer(ctx$op.value('nclust'))
+    if(input$plot_type == "Stars") {
+      PlotStars(
+        fSOM[[1]],
+        maxNodeSize = input$maxNodeSize,
+        backgroundValues = as.factor(fSOM[[2]]))
     } 
-    
-    fSOM <- FlowSOM(
-      dat,
-      scale = TRUE,
-      colsToUse = 1:ncol(dat),
-      nClus = n.clust,
-      maxMeta = 10,
-      seed = 42
-    )
-    
-    # input par: plot stars or plot  marker
-    # dropdown menu
-    
-    if(input$plot_type == "Stars") PlotStars(fSOM[[1]], backgroundValues = as.factor(fSOM[[2]]))
-    if(input$plot_type == "Markers") PlotMarker(fSOM[[1]], input$select_marker)
+    else if(input$plot_type == "Markers") {
+      PlotMarker(
+        fSOM[[1]],
+        maxNodeSize = input$maxNodeSize,
+        input$select_marker)
+    } 
     
   })
   
@@ -74,12 +64,13 @@ shinyServer(function(input, output, session) {
 getValues <- function(session){
   
   ctx <- getCtx(session)
+  # search for a schema that contains a column name 
+  # schema = find.schema.by.factor.name(ctx, '.base64.serialized.r.model')
+  schema = find.schema.by.factor.name(ctx, ctx$labels[[1]])
+  # get the data
+  table = ctx$client$tableSchemaService$select(schema$id, Map(function(x) x$name, schema$columns), 0, schema$nRows)
   
-  data = ctx %>% 
-    select(.ci, .ri, .y) %>% 
-    reshape2::acast(.ci ~ .ri, value.var='.y', fill=NaN, fun.aggregate=mean)
+  fsom = lapply(as_tibble(table)[[".base64.serialized.r.model"]], deserialize.from.string)[[1]]
   
-  colnames(data) <- ctx$rselect() %>% unite("rnames") %>% unlist %>% unname
-  
-  return(data)
+  return(fsom)
 }
