@@ -1,28 +1,8 @@
 {
   "name": "FlowSOM MST",
-  "description": "FlowSOM Minimum Spanning Tree: Displays cluster populations identified by the FlowSOM alglorithm into a graph which plots their relationships to each other.",
+  "description": "FlowSOM Minimum Spanning Tree: Displays cluster populations identified by the FlowSOM algorithm into a graph which plots their relationships to each other.",
   "tags": ["flowsom"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/flowsom_mst_shiny_operator"],
-  "container": "tercen/flowsom_mst:0.1.0",
-  "properties": [
-   {
-    "kind": "StringProperty",
-    "name": "nclust",
-    "defaultValue": "NULL",
-    "description": "number of clusters"
-  },
-  {
-    "kind": "DoubleProperty",
-    "name": "maxMeta",
-    "defaultValue": 10,
-    "description": "Maximal number of clusters"
-  },
-  {
-    "kind": "DoubleProperty",
-    "name": "seed",
-    "defaultValue": 42,
-    "description": "random seed"
-  }
-  ]
+  "container": "tercen/flowsom_mst:0.1.4"
 }

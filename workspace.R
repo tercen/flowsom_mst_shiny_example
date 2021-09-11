@@ -4,51 +4,18 @@ library(tercen)
 library(dplyr)
 library(tidyr)
 library(FlowSOM)
+# devtools::install_github("tercen/tim")
+library(tim)
 
 ############################################
 #### This part should not be included in ui.R and server.R scripts
 getCtx <- function(session) {
-  ctx <- tercenCtx(stepId = "696ceac5-92e5-4b8b-b76d-06d4a2346a16",
-                   workflowId = "527f056bd521570e65126f6dbb0091e3")
+  ctx <- tercenCtx(stepId = "56954774-4f4f-4289-9b32-86a714831ac7",
+                   workflowId = "e9482bf86b951d32f9ff44a499015119")
   return(ctx)
 }
 ####
 ############################################
-
-deserialize.from.string = function(str64){
-  con = rawConnection(base64enc::base64decode(str64), "r+")
-  object = readRDS(con)
-  close(con)
-  return(object)
-}
-find.schema.by.factor.name = function(ctx, factor.name){
-  visit.relation = function(visitor, relation){
-    if (inherits(relation,"SimpleRelation")){
-      visitor(relation)
-    } else if (inherits(relation,"CompositeRelation")){
-      visit.relation(visitor, relation$mainRelation)
-      lapply(relation$joinOperators, function(jop){
-        visit.relation(visitor, jop$rightRelation)
-      })
-    } 
-    invisible()
-  }
-  
-  myenv = new.env()
-  add.in.env = function(object){
-    myenv[[toString(length(myenv)+1)]] = object$id
-  }
-  
-  visit.relation(add.in.env, ctx$query$relation)
-  
-  schemas = lapply(as.list(myenv), function(id){
-    ctx$client$tableSchemaService$get(id)
-  })
-  
-  Find(function(schema){
-    !is.null(Find(function(column) column$name == factor.name, schema$columns))
-  }, schemas);
-}
 
 
 ui <- shinyUI(fluidPage(
@@ -62,14 +29,14 @@ ui <- shinyUI(fluidPage(
   tags$footer(shinyjs::hidden(
     actionButton(inputId = "hiddenButton", label = "hidden")
   )),
-  titlePanel("FlowSOM - MST"),
+  titlePanel("FlowSOM - Minimum Spanning Tree visualisation"),
   
   sidebarPanel(
     selectInput("plot_type", "Plot type:", c("Markers", "Stars"), "Markers"),
     uiOutput("selectMarker"),
-    sliderInput("maxNodeSize", "Node size", 0, 10, value = 1, step = 0.1),
-    sliderInput("plotWidth", "Plot width (px)", 200, 2000, 500),
-    sliderInput("plotHeight", "Plot height (px)", 200, 2000, 700)
+    sliderInput("maxNodeSize", "Node size", 0, 10, value = 1.2, step = 0.05),
+    sliderInput("plotWidth", "Plot width (px)", 200, 2000, 750),
+    sliderInput("plotHeight", "Plot height (px)", 200, 2000, 750)
   ),
   
   mainPanel(
@@ -94,7 +61,7 @@ server <- shinyServer(function(input, output, session) {
   
   output$selectMarker <- renderUI({
     fsom <- dataInput()
-    markers <- unname(colnames(fsom$FlowSOM$data))
+    markers <- names(fsom$prettyColnames)
     selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
   }) 
   
@@ -104,16 +71,12 @@ server <- shinyServer(function(input, output, session) {
     fSOM <- dataInput()
 
     if(input$plot_type == "Stars") {
-      PlotStars(
-        fSOM[[1]],
-        maxNodeSize = input$maxNodeSize,
-        backgroundValues = as.factor(fSOM[[2]]))
+      PlotStars(fSOM, maxNodeSize = input$maxNodeSize,
+                backgroundValues = fsom$metaclustering)
     } 
     else if(input$plot_type == "Markers") {
-      PlotMarker(
-        fSOM[[1]],
-        maxNodeSize = input$maxNodeSize,
-        input$select_marker)
+      PlotMarker(fSOM, maxNodeSize = input$maxNodeSize, input$select_marker,
+                 backgroundValues = fsom$metaclustering)
     } 
     
   })
@@ -124,13 +87,12 @@ getValues <- function(session){
   
   ctx <- getCtx(session)
   # search for a schema that contains a column name 
-  # schema = find.schema.by.factor.name(ctx, '.base64.serialized.r.model')
-  schema = find.schema.by.factor.name(ctx, ctx$labels[[1]])
+  schema = find_schema_by_factor_name(ctx, ctx$labels[[1]])
   # get the data
   table = ctx$client$tableSchemaService$select(schema$id, Map(function(x) x$name, schema$columns), 0, schema$nRows)
   
-  fsom = lapply(as_tibble(table)[[".base64.serialized.r.model"]], deserialize.from.string)[[1]]
-
+  fsom = lapply(as_tibble(table)[[".base64.serialized.r.model"]], deserialize_from_string)[[1]]
+  # fsom$data <- NULL
   return(fsom)
 }
 
