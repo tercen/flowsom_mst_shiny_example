@@ -1172,13 +1172,6 @@
       "Repository": "CRAN",
       "Hash": "079cb1f03ff972b30401ed05623cbe92"
     },
-    "reshape2": {
-      "Package": "reshape2",
-      "Version": "1.4.4",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "bb5996d0bd962d214a11140d77589917"
-    },
     "rio": {
       "Package": "rio",
       "Version": "0.5.27",
@@ -1318,6 +1311,18 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "6ea435c354e8448819627cf686f66e0a"
+    },
+    "tim": {
+      "Package": "tim",
+      "Version": "0.0.3",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "tim",
+      "RemoteUsername": "tercen",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "d020ff3e6f643c7b4ba13fee706f716f02f3f4b6",
+      "Hash": "91271420be989e8b8adb379317150af1"
     },
     "tmvnsim": {
       "Package": "tmvnsim",

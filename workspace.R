@@ -4,7 +4,6 @@ library(tercen)
 library(dplyr)
 library(tidyr)
 library(FlowSOM)
-# devtools::install_github("tercen/tim")
 library(tim)
 
 ############################################
@@ -61,6 +60,7 @@ server <- shinyServer(function(input, output, session) {
   
   output$selectMarker <- renderUI({
     fsom <- dataInput()
+    req(fsom)
     markers <- names(fsom$prettyColnames)
     selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
   }) 
@@ -68,14 +68,15 @@ server <- shinyServer(function(input, output, session) {
   output$main.plot <- renderPlot({
     
     ctx <- getCtx(session)
-    fSOM <- dataInput()
+    fsom <- dataInput()
+    req(fsom)
 
     if(input$plot_type == "Stars") {
-      PlotStars(fSOM, maxNodeSize = input$maxNodeSize,
+      PlotStars(fsom = fsom, maxNodeSize = input$maxNodeSize,
                 backgroundValues = fsom$metaclustering)
     } 
     else if(input$plot_type == "Markers") {
-      PlotMarker(fSOM, maxNodeSize = input$maxNodeSize, input$select_marker,
+      PlotMarker(fsom = fsom, maxNodeSize = input$maxNodeSize, marker =  input$select_marker,
                  backgroundValues = fsom$metaclustering)
     } 
     

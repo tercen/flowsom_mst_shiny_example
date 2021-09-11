@@ -1,8 +1,10 @@
 library(shiny)
+library(shinyjs)
 library(tercen)
 library(dplyr)
 library(tidyr)
 library(FlowSOM)
+library(tim)
 
 ############################################
 #### This part should not be modified
@@ -35,26 +37,24 @@ shinyServer(function(input, output, session) {
   
   output$selectMarker <- renderUI({
     fsom <- dataInput()
-    markers <- unname(colnames(fsom$FlowSOM$data))
+    req(fsom)
+    markers <- names(fsom$prettyColnames)
     selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
   }) 
   
   output$main.plot <- renderPlot({
     
     ctx <- getCtx(session)
-    fSOM <- dataInput()
+    fsom <- dataInput()
+    req(fsom)
     
     if(input$plot_type == "Stars") {
-      PlotStars(
-        fSOM[[1]],
-        maxNodeSize = input$maxNodeSize,
-        backgroundValues = as.factor(fSOM[[2]]))
+      PlotStars(fsom = fsom, maxNodeSize = input$maxNodeSize,
+                backgroundValues = fsom$metaclustering)
     } 
     else if(input$plot_type == "Markers") {
-      PlotMarker(
-        fSOM[[1]],
-        maxNodeSize = input$maxNodeSize,
-        input$select_marker)
+      PlotMarker(fsom = fsom, maxNodeSize = input$maxNodeSize, marker =  input$select_marker,
+                 backgroundValues = fsom$metaclustering)
     } 
     
   })
@@ -65,12 +65,11 @@ getValues <- function(session){
   
   ctx <- getCtx(session)
   # search for a schema that contains a column name 
-  # schema = find.schema.by.factor.name(ctx, '.base64.serialized.r.model')
-  schema = find.schema.by.factor.name(ctx, ctx$labels[[1]])
+  schema = find_schema_by_factor_name(ctx, ctx$labels[[1]])
   # get the data
   table = ctx$client$tableSchemaService$select(schema$id, Map(function(x) x$name, schema$columns), 0, schema$nRows)
   
-  fsom = lapply(as_tibble(table)[[".base64.serialized.r.model"]], deserialize.from.string)[[1]]
-  
+  fsom = lapply(as_tibble(table)[[".base64.serialized.r.model"]], deserialize_from_string)[[1]]
+  # fsom$data <- NULL
   return(fsom)
 }
