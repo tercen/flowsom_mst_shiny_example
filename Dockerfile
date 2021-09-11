@@ -8,7 +8,7 @@ RUN apt-get install -y tk
 
 RUN git clone https://github.com/tercen/flowsom_mst_shiny_operator.git
 
-WORKDIR /operator/flowsom_operator
+WORKDIR /operator/flowsom_mst_shiny_operator
 
 RUN echo 0.1.4 && git pull
 RUN git checkout 0.1.4
