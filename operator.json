@@ -4,6 +4,7 @@
   "tags": ["flowsom"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/flowsom_mst_shiny_operator"],
-  "container": "tercen/flowsom_mst_shiny_operator:0.1.8",
-  "isWebApp": true
+  "container": "tercen/flowsom_mst_shiny_operator:0.1.9",
+  "isWebApp": true,
+  "isViewOnly": false
 }
