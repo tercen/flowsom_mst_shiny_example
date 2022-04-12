@@ -16,8 +16,8 @@ RUN git checkout 0.1.4
 RUN R -e "renv::restore(confirm=FALSE)"
 
 RUN git checkout master
-RUN echo 0.1.6 && git pull
-RUN git checkout 0.1.6
+RUN echo 0.1.8 && git pull
+RUN git checkout 0.1.8
 
 ENV TERCEN_SERVICE_URI https://tercen.com
 
