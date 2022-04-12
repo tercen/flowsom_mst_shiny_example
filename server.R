@@ -38,7 +38,7 @@ shinyServer(function(input, output, session) {
   output$selectMarker <- renderUI({
     fsom <- dataInput()
     req(fsom)
-    markers <- names(fsom$prettyColnames)
+    markers <- names(fsom$FlowSOM$prettyColnames)
     selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
   }) 
   

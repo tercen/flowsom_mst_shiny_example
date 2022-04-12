@@ -9,8 +9,8 @@ library(tim)
 ############################################
 #### This part should not be included in ui.R and server.R scripts
 getCtx <- function(session) {
-  ctx <- tercenCtx(stepId = "56954774-4f4f-4289-9b32-86a714831ac7",
-                   workflowId = "e9482bf86b951d32f9ff44a499015119")
+  ctx <- tercenCtx(stepId = "209ff3ab-8fe4-4815-8a07-b388564a632b",
+                   workflowId = "0a835848c8dfb205b9151ce2ee2e738a")
   return(ctx)
 }
 ####
@@ -61,7 +61,7 @@ server <- shinyServer(function(input, output, session) {
   output$selectMarker <- renderUI({
     fsom <- dataInput()
     req(fsom)
-    markers <- names(fsom$prettyColnames)
+    markers <- names(fsom$FlowSOM$prettyColnames)
     selectInput(inputId = "select_marker", label = "Select marker:", choices = markers)
   }) 
   
